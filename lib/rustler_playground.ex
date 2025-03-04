@@ -9,6 +9,8 @@ defmodule RustlerPlayground do
 
   defmacro sigil_RUST({:<<>>, _, [binary]}, []) do
     options = Module.get_attribute(__CALLER__.module, :rustler_playground_options)
+    {quiet, options} = Keyword.pop(options, :quiet)
+    {stderr_to_stdout, options} = Keyword.pop(options, :stderr_to_stdout)
 
     {cargo_dependencies, options} =
       Keyword.pop(options, :cargo_dependencies, """
@@ -47,6 +49,13 @@ defmodule RustlerPlayground do
     File.mkdir_p!("#{native_dir}/src")
     File.write!("#{native_dir}/src/lib.rs", binary)
 
+    into =
+      if quiet do
+        ""
+      else
+        IO.stream()
+      end
+
     {_, 0} =
       System.cmd(
         "cargo",
@@ -56,7 +65,8 @@ defmodule RustlerPlayground do
         env: %{
           "CARGO_TARGET_DIR" => Application.app_dir(:rustler_playground)
         },
-        into: IO.stream(),
+        into: into,
+        stderr_to_stdout: stderr_to_stdout,
         cd: native_dir
       )
 
