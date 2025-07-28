@@ -10,7 +10,7 @@ defmodule RustlerPlayground do
   defmacro sigil_RUST({:<<>>, _, [binary]}, []) do
     options = Module.get_attribute(__CALLER__.module, :rustler_playground_options)
     {quiet, options} = Keyword.pop(options, :quiet)
-    {stderr_to_stdout, options} = Keyword.pop(options, :stderr_to_stdout)
+    {stderr_to_stdout, options} = Keyword.pop(options, :stderr_to_stdout, false)
 
     {cargo_dependencies, options} =
       Keyword.pop(options, :cargo_dependencies, """

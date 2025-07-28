@@ -8,7 +8,7 @@ defmodule DemoNIF do
   ~RUST"""
   #[rustler::nif]
   fn add(a: i64, b: i64) -> i64 {
-      a * b
+      a + b
   }
 
   rustler::init!("Elixir.DemoNIF");
